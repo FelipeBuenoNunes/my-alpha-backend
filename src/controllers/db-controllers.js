@@ -35,3 +35,5 @@ module.exports = {
         insertRefreshToken:'UPDATE users SET refreshToken=$1 WHERE username=$2',
     }
 };
+
+//insertOneUser:'INSERT INTO users("name", "password", "email", "phone", "birthDate", "cpf", "gender", "refreshToken") VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
