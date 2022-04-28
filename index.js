@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const routes = require("./routes/routes");
+const routes = require("./src/routes/routes");
 const cookieParser = require('cookie-parser');
 
 app.use(express.urlencoded({extended: false}));
