@@ -1,5 +1,5 @@
 const {hash, compare} = require('bcrypt');
-const {sign} = require('jsonwebtoken');
+const {sign, verify} = require('jsonwebtoken');
 const controllers = require('../controllers/db-controllers.js');
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -16,6 +16,7 @@ class User{
     };
     async createUser(){
         try{
+            this.object.refreshToken = '';
             this.object.password = await hash(this.object.password, 10);
             controllers.queryDb(this.object, controllers.q.insertOneUser)
                 .catch((erro)=>{
@@ -55,14 +56,23 @@ class User{
     };
     refreshToken(){
         const {username} = this.object;
-        return sign(
-            username,
-            process.env.REFRESH_TOKEN_PHRASE,
-            {
-                expiresIn: '1d'
-            }
-        );
-    }
+        const token = sign(username, process.env.REFRESH_TOKEN_PHRASE,{expiresIn: '1d'});
+        await controllers.queryDb({token, username}, controllers.q.insertRefreshToken);
+        return ;
+    };
+    async searchUserToken(){
+        const {invisibleCookie} = this.object;
+        const query = verify(invisibleCookie, process.env.REFRESH_TOKEN_PHRASE);
+        const username = query.username;
+        const user = (await controllers.queryDb({username}, controllers.q.selectOneUser)).rows;
+
+        if(user.length === 0 || user[0].refreshToken !== invisibleCookie){
+            return false;
+        }else{
+            this.object.username = username;
+            return true;
+        };
+    };
     postImage(){
 
     };

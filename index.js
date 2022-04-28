@@ -17,7 +17,7 @@ app.use(express.static('./src'));
 
 module.exports
 
-app.listen(process.env.PORT, err => {
+app.listen(process.env.PORT_SERVER, err => {
   if(err){
       console.log("There was a problem", err);
       return;

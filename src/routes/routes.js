@@ -45,15 +45,34 @@ router.post('/checkuser', async (req, res) => {
 })
 
 // invisible_cookie
-router.post('/invisible_cookie', ((req, res) => {
+router.post('/invisible_cookie', async (req, res) => {
   const invisibleCookie = req.cookies.refreshCookie;
 
   if (!invisibleCookie){
     return res.status(403).send("Not permited!");
-  } else {
-    
-  }
-}))
+  };
+  const user = new User({invisibleCookie});
+  const bol = await user.searchUserToken()
+    .catch(err=>{
+      res.status(403).send('Forbidden');
+    });
+
+  if(!bol){
+    res.status(403).send('Forbidden');
+  };
+  const accessToken = user.accessToken();
+  const refreshToken = user.refreshToken();
+
+  res.cookie(`refreshCookie`, refreshToken, {
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: true,
+    httpOnly: true,
+    path: `/invisible_cookie`
+  });
+
+  res.json({accessToken}); 
+  
+});
 
 // Logout
 

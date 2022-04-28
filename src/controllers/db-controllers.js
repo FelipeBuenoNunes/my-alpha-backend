@@ -30,7 +30,8 @@ async function queryDb(user, _query){
 module.exports = {
     queryDb,
     q:{
-        insertOneUser:'INSERT INTO users("name", "password", "email", "phone", "birthDate", "cpf", "gender") VALUES($1, $2, $3, $4, $5, $6, $7)',
-        selectOneUser:'SELECT * FROM users WHERE email = $1'
+        insertOneUser:'INSERT INTO users("name", "password", "email", "phone", "birthDate", "cpf", "gender", "refreshToken") VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
+        selectOneUser:'SELECT * FROM users WHERE email = $1',
+        insertRefreshToken:'UPDATE users SET refreshToken=$1 WHERE username=$2',
     }
 };
