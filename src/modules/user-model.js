@@ -31,7 +31,7 @@ class User{
     async checkPassword(){
         try{
             const {password} = this.object;
-            const {password:hashedPassword} = (await controllers.queryDb({item:this.object.email}, controllers.q.selectOneUser)).rows[0];
+            const {password:hashedPassword} = (await controllers.queryDb({item:this.object.username}, controllers.q.selectOneUser)).rows[0];
             
             const authPassword = compare(password, hashedPassword);
             if(!authPassword){
@@ -44,21 +44,22 @@ class User{
             console.log(erro);
         }
     };
-    acessToken(){
+    accessToken(){
         const {username} = this.object;
+        console.log(username);
         return sign(
-            username,
-            process.env.ACCESS_TOKEN_PHRASE,
-            {
-                expiresIn: '5m'
-            }
+            {   
+                exp: Math.floor(Date.now() / 1000) + 300,
+                data:username
+            },
+            process.env.ACCESS_TOKEN_PHRASE
         );
     };
-    refreshToken(){
+    async refreshToken(){
         const {username} = this.object;
-        const token = sign(username, process.env.REFRESH_TOKEN_PHRASE,{expiresIn: '1d'});
+        const token = sign({exp: Math.floor(Date.now() / 1000) + 86400, data: username}, process.env.REFRESH_TOKEN_PHRASE);
         await controllers.queryDb({token, username}, controllers.q.insertRefreshToken);
-        return ;
+        return token;
     };
     async searchUserToken(){
         const {invisibleCookie} = this.object;

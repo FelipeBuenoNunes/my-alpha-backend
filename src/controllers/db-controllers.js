@@ -1,4 +1,5 @@
 const { Client } = require('pg');
+require('dotenv/config');
 
 
 dbAccess = {
@@ -19,6 +20,7 @@ async function queryDb(user, _query){
             text:_query,
             values:Object.values(user)
         };
+        
         const insert = await client.query(query);
 
         return insert;
@@ -30,9 +32,9 @@ async function queryDb(user, _query){
 module.exports = {
     queryDb,
     q:{
-        insertOneUser:'INSERT INTO users("name", "password", "email", "phone", "birthDate", "cpf", "gender", "refreshToken") VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
-        selectOneUser:'SELECT * FROM users WHERE email = $1',
-        insertRefreshToken:'UPDATE users SET refreshToken=$1 WHERE username=$2',
+        insertOneUser:'INSERT INTO users("name", "password", "email", "birthDate", "refreshToken") VALUES($1, $2, $3, $4, $5)',
+        selectOneUser:'SELECT * FROM users WHERE name = $1',
+        insertRefreshToken:'UPDATE users SET \"refreshToken\"=$1 WHERE \"name\"=$2',
     }
 };
 

@@ -1,11 +1,11 @@
-const User = require("modules/user-model.js");
+const User = require("../modules/user-model.js");
 const router = require("express").Router();
+
+
 
 // Cadastro
 router.post('/adduser', async (req, res) => {
   const userData = req.body;
-
-  console.log(userData);
 
   const user = new User(userData);
   await user.createUser()
@@ -31,13 +31,13 @@ router.post('/checkuser', async (req, res) => {
     return res.send("Not permited!");
   } else {
     const accessToken = user.accessToken();
-
-    res.cookie(`refreshCookie`, `${user.refreshToken()}`, {
+    
+    res.cookie(`refreshCookie`, `${await user.refreshToken()}`, {
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
       httpOnly: true,
       path: `/invisible_cookie`
-    })
+    });
 
     res.json({accessToken}); 
   }
@@ -61,7 +61,7 @@ router.post('/invisible_cookie', async (req, res) => {
     res.status(403).send('Forbidden');
   };
   const accessToken = user.accessToken();
-  const refreshToken = user.refreshToken();
+  const refreshToken = await user.refreshToken();
 
   res.cookie(`refreshCookie`, refreshToken, {
     maxAge: 24 * 60 * 60 * 1000,
