@@ -7,11 +7,10 @@ dbAccess = {
     database: process.env.DATABASE, //|| 'postgres',
     password: process.env.PASSWORD, //|| 'vpTDpLTx!vM8@8z',
     port: process.env.PORT, //|| 5432,
-    user: process.env.USER //|| 'postgres'
+    user: process.env.USERDB //|| 'postgres'
 };
 
 async function queryDb(user, _query){
-
     const client = new Client(dbAccess);
     try{
         await client.connect()
@@ -35,6 +34,7 @@ module.exports = {
         insertOneUser:'INSERT INTO users("name", "password", "email", "birthDate", "refreshToken") VALUES($1, $2, $3, $4, $5)',
         selectOneUser:'SELECT * FROM users WHERE name = $1',
         insertRefreshToken:'UPDATE users SET \"refreshToken\"=$1 WHERE \"name\"=$2',
+        insertImage: 'INSERT INTO images("user_id", "title", "description", "local_image") VALUES($1, $2, $3, $4)',
     }
 };
 

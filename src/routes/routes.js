@@ -1,7 +1,7 @@
+const path = require("path");
+const multer = require("multer");
 const User = require("../modules/user-model.js");
 const router = require("express").Router();
-
-
 
 // Cadastro
 router.post('/adduser', async (req, res) => {
@@ -82,10 +82,28 @@ router.get('/logout', ((req, res) =>{
   res.send("Logout");
 }))
 
-// Post Photo
-router.post('/postphoto', async (req, res) => {
-  const photoinfo = req.body;
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+      let pathName = path.basename(file.originalname);
+      cb(null, pathName);
+  }
+});
 
+const upload = multer({storage : storage })
+
+// Post Photo
+router.post('/postphoto', upload.single('image'), (req, res) => {
+  const photoinfo = req.file;
+  const {title, description} = req.body;
+
+  let user = new User({description, title, localImage: path.join( __dirname, "../../images/") + photoinfo.originalname});
+  user.postImage();
+
+  console.log(path.join( __dirname, "../../images/")+photoinfo.originalname)
+  
   // Save photo
 
   res.send("done");
