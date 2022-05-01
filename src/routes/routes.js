@@ -88,7 +88,7 @@ const storage = multer.diskStorage({
       cb(null, 'images');
   },
   filename: (req, file, cb) => {
-      let pathName = path.basename(file.originalname);
+      let pathName = (new Date).getTime() + photoinfo.originalname;
       cb(null, pathName);
   }
 });
@@ -98,12 +98,10 @@ const upload = multer({storage : storage })
 // Post Photo
 router.post('/postphoto', upload.single('image'), (req, res) => {
   const photoinfo = req.file;
-  const {title, description} = req.body;
+  const { description } = req.body;
 
-  let user = new User({description, title, localImage: path.join( __dirname, "../../images/") + photoinfo.originalname});
+  let user = new User({description, localImage: path.join( __dirname, "../../images/") + (new Date).getTime() + photoinfo.originalname});
   user.postImage();
-
-  console.log(path.join( __dirname, "../../images/")+photoinfo.originalname)
   
   // Save photo
 
