@@ -114,10 +114,22 @@ router.post('/postphoto', upload.single('image'), (req, res) => {
 // Edit Profile
 router.post('/editprofile', async (req, res) => {
   const newUserData = req.body;
+  const accessToken = req.header.authorization;
+  
+  const user = new User({newUserData, accessToken});
 
-  // data update
+  if(await checkAutentication()){
+    await user.editProfile()
+      .then(response => {
+        return res.send("Editado!");
+      })
+      .catch(error => {
+        return res.send(`Erro no cadatro, código: ${error}`)
+      });
+  } else {
+    return res.send("Falha na autenticação!");
+  }
 
-  res.send("done");
 })
 
 router.get('/getImages', async (req, res) => {

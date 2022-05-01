@@ -92,6 +92,21 @@ class User {
         const reposta = (await controllers.queryDb({}, controllers.q.getImages)).rows;
         return reposta;
     }
+
+    async checkAutentication() {
+        const { accessToken } =  this.object;
+        const { data } = verify(accessToken, process.env.ACCESS_TOKEN_PHRASE);
+
+        const checkRowCount = await controllers.queryDb({ data }, controllers.q.selectOneUser);
+
+        if(checkRowCount.rowCount !== 0){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+
 };
 
 module.exports = User;
