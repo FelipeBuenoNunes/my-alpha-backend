@@ -77,11 +77,15 @@ class User {
         };
     };
 
-    async postImage() { 
-        console.log(this.object)       
+    async postImage() {        
         const { description, title, localImage } = this.object;
         await controllers.queryDb({id: 5, title, description, localImage}, controllers.q.insertImage)
     };
+
+    async getImage() {
+        const reposta = (await controllers.queryDb({}, controllers.q.getImages)).rows;
+        return reposta;
+    }
 };
 
 module.exports = User;

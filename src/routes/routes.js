@@ -2,6 +2,7 @@ const path = require("path");
 const multer = require("multer");
 const User = require("../modules/user-model.js");
 const router = require("express").Router();
+const fs = require('fs');
 
 // Cadastro
 router.post('/adduser', async (req, res) => {
@@ -119,6 +120,17 @@ router.post('/editprofile', async (req, res) => {
   res.send("done");
 })
 
+router.get('/getImages', async (req, res) => {
+  const user = new User({});
+  let arrPhotos = (await user.getImage());
+  const response = [];
+  arrPhotos.forEach(photoInfo => {
+    let img64 = fs.readFileSync(photoInfo.local_image, 'base64')
+    let tagImg = `<img src="data:image/jpeg;base64,${img64}" />`;
+    response.push({ name: photoInfo.name, title: photoInfo.title, description: photoInfo.description, img: tagImg });
+  })
+  res.json(response)
+});
 
 
 module.exports = router;
