@@ -2,7 +2,8 @@ const { hash, compare } = require('bcrypt');
 const { sign, verify } = require('jsonwebtoken');
 const controllers = require('../controllers/db-controllers.js');
 const multer = require('multer')
-const path = require('path')
+const path = require('path');
+const { password } = require('pg/lib/defaults');
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //criar um campo para o refresh token no database.
@@ -75,6 +76,11 @@ class User {
             this.object.username = username;
             return true;
         };
+    };
+    async editProfile(){
+        const {username, password, email, birthDate} = this.object;
+        const query = await controllers.queryDb({username, password, email, birthDate}, controllers.q.alterUser)
+        console.log(query);
     };
 
     async postImage() {        

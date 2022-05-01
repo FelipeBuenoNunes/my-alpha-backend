@@ -37,6 +37,7 @@ module.exports = {
         insertImage: 'INSERT INTO images("user_id", "title", "description", "local_image") VALUES($1, $2, $3, $4)',
         getImages: `SELECT "users"."name", "images"."title", "images"."description", "images"."local_image" 
             FROM "images" JOIN "users" ON "users"."id" = "images"."user_id"`,
+        alterUser: `UPDATE users SET \"name\"=$1, \"email\"=$2, \"password\"=$3, \"birthDate\"=$4 WHERE \"name\"=$1`
     }
 };
 
