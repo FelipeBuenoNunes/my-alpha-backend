@@ -34,8 +34,8 @@ module.exports = {
         insertOneUser: 'INSERT INTO users("name", "password", "email", "birthDate", "refreshToken") VALUES($1, $2, $3, $4, $5)',
         selectOneUser: 'SELECT * FROM users WHERE name = $1',
         insertRefreshToken: 'UPDATE users SET \"refreshToken\"=$1 WHERE \"name\"=$2',
-        insertImage: 'INSERT INTO images("user_id", "title", "description", "local_image") VALUES($1, $2, $3, $4)',
-        getImages: `SELECT "users"."name", "images"."title", "images"."description", "images"."local_image" 
+        insertImage: 'INSERT INTO images("user_id", "description", "local_image") VALUES($1, $2, $3)',
+        getImages: `SELECT "images"."id", "users"."name", "images"."description", "images"."local_image"
             FROM "images" JOIN "users" ON "users"."id" = "images"."user_id"`,
         alterUser: `UPDATE users SET \"name\"=$1, \"email\"=$2, \"password\"=$3, \"birthDate\"=$4 WHERE \"name\"=$1`
     }

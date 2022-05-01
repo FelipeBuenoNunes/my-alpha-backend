@@ -84,8 +84,8 @@ class User {
     };
 
     async postImage() {        
-        const { description, title, localImage } = this.object;
-        await controllers.queryDb({id: 5, title, description, localImage}, controllers.q.insertImage)
+        const { description, localImage } = this.object;
+        await controllers.queryDb({id: 1, description, localImage}, controllers.q.insertImage)
     };
 
     async getImage() {
