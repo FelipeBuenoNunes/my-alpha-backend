@@ -29,7 +29,7 @@ router.post('/checkuser', async (req, res) => {
   const response = await user.checkPassword();
 
   if (!response){
-    return res.send("Not permited!");
+    return res.status(401).json({query:'Falha ao logar. Username ou senha incorretos.'});
   } else {
     const accessToken = user.accessToken();
     
@@ -40,7 +40,7 @@ router.post('/checkuser', async (req, res) => {
       path: `/invisible_cookie`
     });
 
-    res.json({accessToken}); 
+    res.status(200).json({accessToken}); 
   }
 
 })
@@ -112,11 +112,12 @@ router.post('/postphoto', upload.single('image'), (req, res) => {
 // Edit Profile
 router.post('/editprofile', async (req, res) => {
   const newUserData = req.body;
-  const accessToken = req.header.authorization;
+  let accessToken = req.headers.authorization;
+  accessToken = accessToken.split('bearer ')[1];
   
   const user = new User({newUserData, accessToken});
 
-  if(await checkAutentication()){
+  if(await user.checkAutentication()){
     await user.editProfile()
       .then(response => {
         return res.send("Editado!");

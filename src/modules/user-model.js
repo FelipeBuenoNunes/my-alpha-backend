@@ -12,6 +12,7 @@ const { password } = require('pg/lib/defaults');
 class User {
     constructor(objectData) {
         this.object = objectData;
+        this.username = '';
     };
 
     putInformation() {
@@ -44,7 +45,7 @@ class User {
             }
 
         } catch (erro) {
-            console.log(erro);
+            return false;
         }
     };
     accessToken() {
@@ -78,8 +79,10 @@ class User {
         };
     };
     async editProfile(){
-        const {username, password, email, birthDate} = this.object;
-        const query = await controllers.queryDb({username, password, email, birthDate}, controllers.q.alterUser)
+        const {username, password, email, birthDate} = this.object.newUserData;
+        console.log(this.object);
+        const oldName = this.username
+        const query = await controllers.queryDb({username, password, email, birthDate, oldName}, controllers.q.alterUser)
         console.log(query);
     };
 
@@ -94,11 +97,12 @@ class User {
     }
 
     async checkAutentication() {
-        const { accessToken } =  this.object;
+        const{ accessToken } =  this.object;
+        
         const { data } = verify(accessToken, process.env.ACCESS_TOKEN_PHRASE);
 
         const checkRowCount = await controllers.queryDb({ data }, controllers.q.selectOneUser);
-
+        this.username = data;
         if(checkRowCount.rowCount !== 0){
             return true;
         } else {

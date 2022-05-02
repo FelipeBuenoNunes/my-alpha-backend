@@ -19,6 +19,7 @@ async function queryDb(user, _query) {
             text: _query,
             values: Object.values(user)
         };
+        console.log(query);
 
         const insert = await client.query(query);
 
@@ -37,7 +38,7 @@ module.exports = {
         insertImage: 'INSERT INTO images("user_id", "description", "local_image") VALUES($1, $2, $3)',
         getImages: `SELECT "images"."id", "users"."name", "images"."description", "images"."local_image"
             FROM "images" JOIN "users" ON "users"."id" = "images"."user_id"`,
-        alterUser: `UPDATE users SET \"name\"=$1, \"email\"=$2, \"password\"=$3, \"birthDate\"=$4 WHERE \"name\"=$1`
+        alterUser: `UPDATE users SET \"name\"=$1, \"email\"=$2, \"password\"=$3, \"birthDate\"=$4 WHERE \"name\"=$5`
     }
 };
 
