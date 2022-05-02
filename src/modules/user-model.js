@@ -3,7 +3,6 @@ const { sign, verify } = require('jsonwebtoken');
 const controllers = require('../controllers/db-controllers.js');
 const multer = require('multer')
 const path = require('path');
-const { password } = require('pg/lib/defaults');
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //criar um campo para o refresh token no database.
@@ -22,14 +21,14 @@ class User {
         try {
             this.object.refreshToken = '';
             this.object.password = await hash(this.object.password, 10);
-            controllers.queryDb(this.object, controllers.q.insertOneUser)
+            await controllers.queryDb(this.object, controllers.q.insertOneUser)
                 .catch((erro) => {
                     throw erro;
                 });
-            console.log('Sucess!');
+            // console.log('Sucess!');
 
-        } catch (erro) {
-            console.log(erro);
+        }catch(erro) {
+            throw erro;
         };
     };
     async checkPassword() {

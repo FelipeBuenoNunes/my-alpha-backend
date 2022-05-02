@@ -11,11 +11,12 @@ router.post('/adduser', async (req, res) => {
   const user = new User(userData);
   await user.createUser()
   .then(() => {
-    return res.send("loginPage")
+    console.log('POST - 200');
+    return res.status(200).send('oi');
 })
   .catch(error => {
-    console.log(error);
-    return res.send(error);
+    console.log('POST - 400');
+    return res.status(400).send(error);
   });  
 
 })
@@ -29,6 +30,7 @@ router.post('/checkuser', async (req, res) => {
   const response = await user.checkPassword();
 
   if (!response){
+    console.log('POST - 401');
     return res.status(401).json({query:'Falha ao logar. Username ou senha incorretos.'});
   } else {
     const accessToken = user.accessToken();
@@ -40,6 +42,7 @@ router.post('/checkuser', async (req, res) => {
       path: `/invisible_cookie`
     });
 
+    console.log('POST - 200');
     res.status(200).json({accessToken}); 
   }
 
@@ -50,15 +53,18 @@ router.post('/invisible_cookie', async (req, res) => {
   const invisibleCookie = req.cookies.refreshCookie;
 
   if (!invisibleCookie){
+    console.log('POST - 403');
     return res.status(403).send("Not permited!");
   };
   const user = new User({invisibleCookie});
   const bol = await user.searchUserToken()
     .catch(err=>{
+      console.log('POST - 403');
       res.status(403).send('Forbidden');
     });
 
   if(!bol){
+    console.log('POST - 403');
     res.status(403).send('Forbidden');
   };
   const accessToken = user.accessToken();
@@ -71,6 +77,7 @@ router.post('/invisible_cookie', async (req, res) => {
     path: `/invisible_cookie`
   });
 
+  console.log('POST - 200');
   res.json({accessToken}); 
   
 });
@@ -79,7 +86,7 @@ router.post('/invisible_cookie', async (req, res) => {
 
 router.get('/logout', ((req, res) =>{
   res.clearCookie('refreshCookie');
-
+  console.log('POST - 200');
   res.send("Logout");
 }))
 
