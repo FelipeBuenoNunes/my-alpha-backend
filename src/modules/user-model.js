@@ -28,6 +28,7 @@ class User {
             // console.log('Sucess!');
 
         }catch(erro) {
+            console.log(erro)
             throw erro;
         };
     };

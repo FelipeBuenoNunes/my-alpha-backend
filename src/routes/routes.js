@@ -90,12 +90,15 @@ router.get('/logout', ((req, res) =>{
   res.send("Logout");
 }))
 
+let algDate;
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+      algDate = (new Date).getTime();
       cb(null, 'images');
   },
   filename: (req, file, cb) => {
-      let pathName = (new Date).getTime() + file.originalname;
+      let pathName = algDate + file.originalname.replaceAll(" ", '');
       cb(null, pathName);
   }
 });
@@ -108,7 +111,7 @@ router.post('/postphoto', upload.single('image'), async (req, res) => {
   const photoinfo = req.file;
   const { description } = req.body;
 
-  let user = new User({description, localImage: path.join( __dirname, "../../images/") + (new Date).getTime() + photoinfo.originalname});
+  let user = new User({description, localImage: path.join( __dirname, "../../images/") + algDate + photoinfo.originalname.replaceAll(" ", "")});
   // if(await user.checkAutentication()){
     user.postImage();
     res.send("done")
@@ -151,7 +154,7 @@ router.get('/getImages', async (req, res) => {
     let tagImg = `<img src='data:image/jpeg;base64,${img64}' />`;
     response.push({ name: photoInfo.name, title: photoInfo.title, description: photoInfo.description, img: tagImg });
   })
-  res.json(arrPhotos)
+  res.json(response)
 });
 
 
