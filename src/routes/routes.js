@@ -95,7 +95,7 @@ const storage = multer.diskStorage({
       cb(null, 'images');
   },
   filename: (req, file, cb) => {
-      let pathName = (new Date).getTime() + photoinfo.originalname;
+      let pathName = (new Date).getTime() + file.originalname;
       cb(null, pathName);
   }
 });
@@ -103,16 +103,20 @@ const storage = multer.diskStorage({
 const upload = multer({storage : storage })
 
 // Post Photo
-router.post('/postphoto', upload.single('image'), (req, res) => {
+router.post('/postphoto', upload.single('image'), async (req, res) => {
+  //const accessToken = req.headers.authorization;
   const photoinfo = req.file;
   const { description } = req.body;
 
   let user = new User({description, localImage: path.join( __dirname, "../../images/") + (new Date).getTime() + photoinfo.originalname});
-  user.postImage();
+  // if(await user.checkAutentication()){
+    user.postImage();
+    res.send("done")
+  //}
+  if(false)
+    res.send("Erro na autenticação")
   
   // Save photo
-
-  res.send("done");
 })
 
 
@@ -144,10 +148,10 @@ router.get('/getImages', async (req, res) => {
   const response = [];
   arrPhotos.forEach(photoInfo => {
     let img64 = fs.readFileSync(photoInfo.local_image, 'base64')
-    let tagImg = `<img src="data:image/jpeg;base64,${img64}" />`;
+    let tagImg = `<img src='data:image/jpeg;base64,${img64}' />`;
     response.push({ name: photoInfo.name, title: photoInfo.title, description: photoInfo.description, img: tagImg });
   })
-  res.json(response)
+  res.json(arrPhotos)
 });
 
 
